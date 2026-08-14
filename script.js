@@ -56,6 +56,7 @@ document.querySelector("#rsvp-form").addEventListener("submit", async (event) =>
       body: new URLSearchParams({ name, submittedAt: new Date().toISOString() }),
     });
     showMessage(`Presença confirmada, ${name.split(" ")[0]}! Esperamos você. ♥`, "success");
+    form.classList.add("rsvp--confirmed");
     form.reset();
   } catch {
     showMessage("Não foi possível confirmar agora. Tente novamente em instantes.", "error");

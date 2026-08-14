@@ -24,18 +24,28 @@ document.querySelector("#rsvp-form").addEventListener("submit", async (event) =>
   const name = document.querySelector("#full-name").value.trim();
   const message = document.querySelector("#form-message");
 
+  const showMessage = (text, type = "") => {
+    if (!message) {
+      alert(text);
+      return;
+    }
+
+    message.textContent = text;
+    message.className = `form-message${type ? ` form-message--${type}` : ""}`;
+  };
+
   if (name.split(/\s+/).length < 2) {
-    message.textContent = "Por favor, informe seu nome completo.";
+    showMessage("Por favor, informe seu nome completo.", "error");
     return;
   }
   if (!URL_DA_PLANILHA) {
-    message.textContent = "A planilha ainda não foi configurada.";
+    showMessage("A planilha ainda não foi configurada.", "error");
     return;
   }
 
   button.disabled = true;
   button.textContent = "Enviando...";
-  message.textContent = "";
+  showMessage("Confirmando sua presença...");
   try {
     // no-cors é necessário para enviar o formulário ao Apps Script a partir deste site.
     // A confirmação visual indica que o navegador aceitou o envio.
@@ -45,10 +55,10 @@ document.querySelector("#rsvp-form").addEventListener("submit", async (event) =>
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
       body: new URLSearchParams({ name, submittedAt: new Date().toISOString() }),
     });
-    message.textContent = `Presença confirmada, ${name.split(" ")[0]}! Esperamos você. ♥`;
+    showMessage(`Presença confirmada, ${name.split(" ")[0]}! Esperamos você. ♥`, "success");
     form.reset();
   } catch {
-    message.textContent = "Não foi possível enviar agora. Tente novamente.";
+    showMessage("Não foi possível confirmar agora. Tente novamente em instantes.", "error");
   } finally {
     button.disabled = false;
     button.innerHTML = 'Eu vou <span aria-hidden="true">→</span>';
